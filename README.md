@@ -27,7 +27,7 @@ Creates a new team in the database with zeroed ships
 Whiteteam authenticated.
 
 ```
-/createam [POST]
+/createteam [POST]
 ```
 
 ## URL
@@ -49,7 +49,7 @@ name(string) - the team name
 }
 ```
 
-# [WHITE] Delete a team - delete_team()
+# [WHITE] Delete a team 
 
 Deletes an existing team in the database 
 Whiteteam authenticated.
@@ -72,7 +72,7 @@ teamNum(integer)- the team number
 }
 ```
 
-# [WHITE] Get all teams - get_all_teams()
+# [WHITE] Get all teams 
 
 Returns JSON of all the teams in the database
 White team authenticated.
@@ -108,7 +108,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams
         ...
 ```
 
-# [WHITE] Get one team - get_one_team()
+# [WHITE] Get one team 
 
 Returns JSON of the team requested
 White team authenticated.
@@ -136,7 +136,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams/<teamNu
 }
 ```
 
-# [WHITE] Override a team - override_one_team()
+# [WHITE] Override a team 
 
 Overrides any ship's count
 White team authenticated.
@@ -163,7 +163,7 @@ heavy - heavy ship count
 }
 ```
 
-# [WHITE] Wipe a team - wipe_one_team()
+# [WHITE] Wipe a team 
 
 Wipes a team's ship counts to zero
 White team authenticated
@@ -182,7 +182,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json"
 }
 ```
 
-# [ALL] Increment light - increment_light()
+# [ALL] Increment light 
 
 Increments a team's light ship count
 No authenticated needed.
@@ -200,7 +200,7 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 'message': 'Team 2 has built a light ship'
 }
 ```
-# [ALL] Increment medium - increment_medium()
+# [ALL] Increment medium
 
 Increments a team's medium ship count
 No authenticated needed.
@@ -218,7 +218,7 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 'message': 'Team 2 has built a medium ship'
 }
 ```
-# [ALL] Increment light - increment_heavy()
+# [ALL] Increment light 
 
 Increments a team's heavy ship count
 No authenticated needed.
