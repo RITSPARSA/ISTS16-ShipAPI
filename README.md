@@ -1,6 +1,6 @@
 # ISTS 16 - Ship API
 
-Whiteteam 
+API to manage space ship counts for each all teams. 
 
 ## Getting Started
 
@@ -20,11 +20,10 @@ $ python api.py
 ```
 
 # Queries
----------------------------------------------------
+
 # [WHITE] Create a team 
 
-Creates a new team in the database with zeroed ships
-Whiteteam authenticated.
+Creates a new team in the database with zeroed ships. Whiteteam authenticated.
 
 ```
 /createteam [POST]
@@ -42,7 +41,7 @@ name(string) - the team name
 
 {"teamNum" : 2, "name" : "Blue Team 2"}
 ```
-## Return
+## Response
 ```
 {
 'message': 'Team 2 - Blue Team 2 created'
@@ -51,8 +50,7 @@ name(string) - the team name
 
 # [WHITE] Delete a team 
 
-Deletes an existing team in the database 
-Whiteteam authenticated.
+Deletes an existing team in the database. Whiteteam authenticated.
 
 ```
 /deleteteam/<teamNum> [DELETE]
@@ -65,7 +63,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -X DELETE http://127.0.0.1:5000/del
 ```
 teamNum(integer)- the team number
 ```
-## Return 
+## Response
 ```
 {
 'message': 'Team 2 deleted'
@@ -74,8 +72,7 @@ teamNum(integer)- the team number
 
 # [WHITE] Get all teams 
 
-Returns JSON of all the teams in the database
-White team authenticated.
+Returns JSON of all the teams in the database. White team authenticated.
 
 ```
 /teams [GET]
@@ -110,8 +107,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams
 
 # [WHITE] Get one team 
 
-Returns JSON of the team requested
-White team authenticated.
+Returns JSON of the team requested. White team authenticated.
 
 ```
 /teams/<teamNum> [GET]
@@ -121,7 +117,7 @@ White team authenticated.
 ```
 curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams/<teamNum>
 ```
-## Return 
+## Response
 ```
 {
     "teams": [
@@ -138,8 +134,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams/<teamNu
 
 # [WHITE] Override a team 
 
-Overrides any ship's count
-White team authenticated.
+Overrides any ship's count. White team authenticated.
 
 ```
 /teams/<teamNum> [POST]
@@ -156,7 +151,7 @@ heavy - heavy ship count
 
 {'light' : 2, 'medium' : 0, 'heavy' : 3}
 ```
-## Return 
+## Response
 ```
 {
 'message': 'Team 2 is updated to light 2, medium 0, heavy 3'
@@ -165,8 +160,7 @@ heavy - heavy ship count
 
 # [WHITE] Wipe a team 
 
-Wipes a team's ship counts to zero
-White team authenticated
+Wipes a team's ship counts to zero. White team authenticated
 
 ```
 /teams/<teamNum>/wipe [PUT]
@@ -184,8 +178,7 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json"
 
 # [ALL] Increment light 
 
-Increments a team's light ship count
-No authenticated needed.
+Increments a team's light ship count. No authenticated needed.
 
 ```
 /teams/<teamNum>/light [PUT]
@@ -202,8 +195,7 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 ```
 # [ALL] Increment medium
 
-Increments a team's medium ship count
-No authenticated needed.
+Increments a team's medium ship count. No authenticated needed.
 
 ```
 /teams/<teamNum>/medium [PUT]
@@ -218,10 +210,9 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 'message': 'Team 2 has built a medium ship'
 }
 ```
-# [ALL] Increment light 
+# [ALL] Increment heavy
 
-Increments a team's heavy ship count
-No authenticated needed.
+Increments a team's heavy ship count. No authenticated needed.
 
 ```
 /teams/<teamNum>/heavy [PUT]
