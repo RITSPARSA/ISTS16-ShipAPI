@@ -21,6 +21,58 @@ $ python api.py
 
 # Queries
 
+# [ALL] Increment light 
+
+Increments a team's light ship count. No authenticated needed.
+
+```
+/teams/<teamNum>/light [PUT]
+```
+## URL
+```
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/light
+```
+## Response
+```
+{
+'message': 'Team 2 has built a light ship'
+}
+```
+# [ALL] Increment medium
+
+Increments a team's medium ship count. No authenticated needed.
+
+```
+/teams/<teamNum>/medium [PUT]
+```
+## URL
+```
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/medium
+```
+## Response
+```
+{
+'message': 'Team 2 has built a medium ship'
+}
+```
+# [ALL] Increment heavy
+
+Increments a team's heavy ship count. No authenticated needed.
+
+```
+/teams/<teamNum>/heavy [PUT]
+```
+## URL
+```
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/heavy
+```
+## Response
+```
+{
+'message': 'Team 2 has built a heavy ship'
+}
+```
+
 # [WHITE] Create a team 
 
 Creates a new team in the database with zeroed ships. Whiteteam authenticated.
@@ -173,58 +225,6 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json"
 ```
 {
 'message': 'Team 2 has been wiped'
-}
-```
-
-# [ALL] Increment light 
-
-Increments a team's light ship count. No authenticated needed.
-
-```
-/teams/<teamNum>/light [PUT]
-```
-## URL
-```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/light
-```
-## Response
-```
-{
-'message': 'Team 2 has built a light ship'
-}
-```
-# [ALL] Increment medium
-
-Increments a team's medium ship count. No authenticated needed.
-
-```
-/teams/<teamNum>/medium [PUT]
-```
-## URL
-```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/medium
-```
-## Response
-```
-{
-'message': 'Team 2 has built a medium ship'
-}
-```
-# [ALL] Increment heavy
-
-Increments a team's heavy ship count. No authenticated needed.
-
-```
-/teams/<teamNum>/heavy [PUT]
-```
-## URL
-```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/heavy
-```
-## Response
-```
-{
-'message': 'Team 2 has built a heavy ship'
 }
 ```
 ## Built With
