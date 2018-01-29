@@ -19,6 +19,13 @@ pip install -r requirements.txt
 $ python api.py
 ```
 
+# Credentials 
+
+```
+username: whiteteam
+password: BmuqO=[yUDQ%>)*`
+```
+
 # Queries
 
 # [ALL] Increment light 
