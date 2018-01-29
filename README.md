@@ -28,55 +28,55 @@ password: BmuqO=[yUDQ%>)*`
 
 # Queries
 
-# [ALL] Increment light 
+# [ALL] Increment guardian 
 
-Increments a team's light ship count. No authenticated needed.
+Increments a team's guardian ship count. No authenticated needed.
 
 ```
-/teams/<teamNum>/light [PUT]
+/teams/<teamNum>/guardian [PUT]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/light
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/guardian
 ```
 ## Response
 ```
 {
-'message': 'Team 2 has built a light ship'
+'message': 'Team 2 has built a guardian ship'
 }
 ```
-# [ALL] Increment medium
+# [ALL] Increment bomber
 
-Increments a team's medium ship count. No authenticated needed.
+Increments a team's bomber ship count. No authenticated needed.
 
 ```
-/teams/<teamNum>/medium [PUT]
+/teams/<teamNum>/bomber [PUT]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/medium
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/bomber
 ```
 ## Response
 ```
 {
-'message': 'Team 2 has built a medium ship'
+'message': 'Team 2 has built a bomber ship'
 }
 ```
-# [ALL] Increment heavy
+# [ALL] Increment striker
 
-Increments a team's heavy ship count. No authenticated needed.
+Increments a team's striker ship count. No authenticated needed.
 
 ```
-/teams/<teamNum>/heavy [PUT]
+/teams/<teamNum>/striker [PUT]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/heavy
+curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/striker
 ```
 ## Response
 ```
 {
-'message': 'Team 2 has built a heavy ship'
+'message': 'Team 2 has built a striker ship'
 }
 ```
 
@@ -146,18 +146,18 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams
 {
 "teams": [
     {
-        "heavy": 0,
+        "striker": 0,
         "id": 1,
-        "light": 0,
-        "medium": 0,
+        "guardian": 0,
+        "bomber": 0,
         "name": "Blue Team 2",
         "teamNum": 2
     },
     {
-        "heavy": 0,
+        "striker": 0,
         "id": 3,
-        "light": 0,
-        "medium": 0,
+        "guardian": 0,
+        "bomber": 0,
         "name": "Blue Team 3",
         "teamNum": 3
     },
@@ -181,10 +181,10 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams/<teamNu
 {
     "teams": [
         {
-            "heavy": 0,
+            "striker": 0,
             "id": 1,
-            "light": 0,
-            "medium": 0,
+            "guardian": 0,
+            "bomber": 0,
             "name": "Blue Team 2",
             "teamNum": 2
         }]
@@ -200,20 +200,20 @@ Overrides any ship's count. White team authenticated.
 ```
 ## URL
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json" -X POST -d '{'light' : [COUNT], 'medium' : [COUNT], 'heavy' : [COUNT]}' http://127.0.0.1:5000/teams/<teamNum>
+curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json" -X POST -d '{'guardian' : [COUNT], 'bomber' : [COUNT], 'striker' : [COUNT]}' http://127.0.0.1:5000/teams/<teamNum>
 ```
 ## Data
 ```
-light - light ship count
-medium - medium ship count
-heavy - heavy ship count
+guardian - guardian ship count
+bomber - bomber ship count
+striker - heavy ship count
 
-{'light' : 2, 'medium' : 0, 'heavy' : 3}
+{'guardian' : 2, 'bomber' : 0, 'striker' : 3}
 ```
 ## Response
 ```
 {
-'message': 'Team 2 is updated to light 2, medium 0, heavy 3'
+'message': 'Team 2 is updated to guardian 2, bomber 0, striker 3'
 }
 ```
 
