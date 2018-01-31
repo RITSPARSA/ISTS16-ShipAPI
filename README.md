@@ -19,25 +19,18 @@ pip install -r requirements.txt
 $ python api.py
 ```
 
-# Credentials 
-
-```
-username: whiteteam
-password: BmuqO=[yUDQ%>)*`
-```
-
 # Queries
 
-# [ALL] Increment guardian 
+# Increment guardian 
 
-Increments a team's guardian ship count. No authenticated needed.
+Increments a team's guardian ship count.
 
 ```
-/teams/<teamNum>/guardian [PUT]
+/teams/<teamNum>/guardian [POST]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/guardian
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NUMBER OF SHIPS]}' http://127.0.0.1:5000/teams/<teamNum>/guardian
 ```
 ## Response
 ```
@@ -45,16 +38,16 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 'message': 'Team 2 has built a guardian ship'
 }
 ```
-# [ALL] Increment bomber
+# Increment bomber
 
-Increments a team's bomber ship count. No authenticated needed.
+Increments a team's bomber ship count.
 
 ```
-/teams/<teamNum>/bomber [PUT]
+/teams/<teamNum>/bomber [POST]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/bomber
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NUMBER OF SHIPS]}' http://127.0.0.1:5000/teams/<teamNum>/bomber
 ```
 ## Response
 ```
@@ -62,16 +55,17 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 'message': 'Team 2 has built a bomber ship'
 }
 ```
-# [ALL] Increment striker
+# Increment striker
 
-Increments a team's striker ship count. No authenticated needed.
+Increments a team's striker ship count. 
 
 ```
-/teams/<teamNum>/striker [PUT]
+/teams/<teamNum>/striker [POST]
 ```
 ## URL
 ```
-curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/striker
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NUMBER OF SHIPS]}' http://127.0.0.1:5000/teams/<teamNum>/striker
+
 ```
 ## Response
 ```
@@ -80,7 +74,7 @@ curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<
 }
 ```
 
-# [WHITE] Create a team 
+# Create a team 
 
 Creates a new team in the database with zeroed ships. Whiteteam authenticated.
 
@@ -90,7 +84,7 @@ Creates a new team in the database with zeroed ships. Whiteteam authenticated.
 
 ## URL
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json" -X POST -d '{"teamNum" : [TEAM NUMBER], "name" : "[TEAM NAME]"}' http://127.0.0.1:5000/createteam
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"teamNum" : [TEAM NUMBER], "name" : "[TEAM NAME]"}' http://127.0.0.1:5000/createteam
 ```
 ## Data
 ```
@@ -107,7 +101,7 @@ name(string) - the team name
 }
 ```
 
-# [WHITE] Delete a team 
+# Delete a team 
 
 Deletes an existing team in the database. Whiteteam authenticated.
 
@@ -116,7 +110,7 @@ Deletes an existing team in the database. Whiteteam authenticated.
 ```
 ## URL
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -X DELETE http://127.0.0.1:5000/deleteteam/<teamNum>
+curl -b COOKIE -v -X DELETE http://127.0.0.1:5000/deleteteam/<teamNum>
 ```
 ## Data 
 ```
@@ -129,8 +123,8 @@ teamNum(integer)- the team number
 }
 ```
 
-# [WHITE] Get all teams 
-
+# Get all teams 
+ 
 Returns JSON of all the teams in the database. White team authenticated.
 
 ```
@@ -139,32 +133,37 @@ Returns JSON of all the teams in the database. White team authenticated.
 
 ## URL 
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams
+curl -b COOKIE -v http://127.0.0.1:5000/teams
 ```
 ## Response
 ```
 {
-"teams": [
-    {
-        "striker": 0,
-        "id": 1,
-        "guardian": 0,
-        "bomber": 0,
-        "name": "Blue Team 2",
-        "teamNum": 2
-    },
-    {
-        "striker": 0,
-        "id": 3,
-        "guardian": 0,
-        "bomber": 0,
-        "name": "Blue Team 3",
-        "teamNum": 3
-    },
-        ...
+    "teams": [
+        {
+            "bomber": 0,
+            "damage": 125,
+            "guardian": 0,
+            "health": 100,
+            "name": "Blue Team 2",
+            "speed": 100,
+            "striker": 0,
+            "teamNum": 2
+        },
+        {
+            "bomber": 0,
+            "damage": 100,
+            "guardian": 0,
+            "health": 100,
+            "name": "Blue Team 3",
+            "speed": 100,
+            "striker": 0,
+            "teamNum": 3
+        }
+    ]
+}
 ```
 
-# [WHITE] Get one team 
+# Get one team 
 
 Returns JSON of the team requested. White team authenticated.
 
@@ -174,24 +173,23 @@ Returns JSON of the team requested. White team authenticated.
 
 ## URL 
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v http://127.0.0.1:5000/teams/<teamNum>
+curl -b COOKIE -v http://127.0.0.1:5000/teams/<teamNum>
 ```
 ## Response
 ```
 {
-    "teams": [
-        {
-            "striker": 0,
-            "id": 1,
-            "guardian": 0,
-            "bomber": 0,
-            "name": "Blue Team 2",
-            "teamNum": 2
-        }]
+    "bomber": 7,
+    "damage": 125,
+    "guardian": 10,
+    "health": 100,
+    "name": "Blue Team 2",
+    "speed": 100,
+    "striker": 1,
+    "teamNum": 2
 }
 ```
 
-# [WHITE] Override a team 
+# Override a team 
 
 Overrides any ship's count. White team authenticated.
 
@@ -200,24 +198,27 @@ Overrides any ship's count. White team authenticated.
 ```
 ## URL
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json" -X POST -d '{'guardian' : [COUNT], 'bomber' : [COUNT], 'striker' : [COUNT]}' http://127.0.0.1:5000/teams/<teamNum>
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{'guardian' : [COUNT], 'bomber' : [COUNT], 'striker' : [COUNT]}' http://127.0.0.1:5000/teams/<teamNum>
 ```
 ## Data
 ```
 guardian - guardian ship count
 bomber - bomber ship count
 striker - heavy ship count
+damage - percentage of damage
+speed - percentage of speed
+health - percentage of health
 
-{'guardian' : 2, 'bomber' : 0, 'striker' : 3}
+{'guardian' : 2, 'bomber' : 0, 'striker' : 3, 'damage' : 100, 'speed' : 125, 'health : 25}
 ```
 ## Response
 ```
 {
-'message': 'Team 2 is updated to guardian 2, bomber 0, striker 3'
+'message': 'Team 2 is updated to guardian 2, bomber 0, striker 3, damage 100, speed 125, health 25'
 }
 ```
 
-# [WHITE] Wipe a team 
+# Wipe a team 
 
 Wipes a team's ship counts to zero. White team authenticated
 
@@ -226,12 +227,29 @@ Wipes a team's ship counts to zero. White team authenticated
 ```
 ## URL
 ```
-curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/wipe
+curl -b COOKIE -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/wipe
 ```
 ## Response
 ```
 {
-'message': 'Team 2 has been wiped'
+'message': 'Team 2 has been reset'
+}
+```
+# Boost a team
+
+Boost a team's attribute by however much is passed.
+
+```
+/teams/<teamNum>/boost [POST]
+```
+## URL
+```
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"attribute" : damage, speed, or health, "type" : "increase or decrease", "value" : 25}' http://127.0.0.1:5000/teams/<teamNum>/boost
+```
+## Response
+```
+{
+'message' : 'Team X [type]'d their [damage, speed, health] by [value] '
 }
 ```
 ## Built With
@@ -242,6 +260,6 @@ curl -u [WHITETEAM USER]:[WHITETEAM PASS] -v -H "Content-Type: application/json"
 
 ## Authors
 
-* **Brandon Dossantos**
+***Brandon Dossantos**
 
 
