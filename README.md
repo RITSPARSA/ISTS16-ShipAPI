@@ -35,7 +35,7 @@ curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NU
 ## Response
 ```
 {
-'message': 'Team 2 has built a guardian ship'
+    'message': 'Team 2 has built X guardian ships'
 }
 ```
 # Increment bomber
@@ -52,7 +52,7 @@ curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NU
 ## Response
 ```
 {
-'message': 'Team 2 has built a bomber ship'
+    'message': 'Team 2 has built X bomber ships'
 }
 ```
 # Increment striker
@@ -70,7 +70,7 @@ curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"value" : [NU
 ## Response
 ```
 {
-'message': 'Team 2 has built a striker ship'
+    'message': 'Team 2 has built striker ships'
 }
 ```
 
@@ -92,12 +92,14 @@ teamNum(integer)- the team number
 name(string) - the team name
 
 
-{"teamNum" : 2, "name" : "Blue Team 2"}
+{
+    'teamNum' : 2, 'name' : 'Blue Team 2'
+}
 ```
 ## Response
 ```
 {
-'message': 'Team 2 - Blue Team 2 created'
+    'message': 'Team 2 - Blue Team 2 created'
 }
 ```
 
@@ -119,7 +121,7 @@ teamNum(integer)- the team number
 ## Response
 ```
 {
-'message': 'Team 2 deleted'
+    'message': 'Team 2 deleted'
 }
 ```
 
@@ -209,30 +211,32 @@ damage - percentage of damage
 speed - percentage of speed
 health - percentage of health
 
-{'guardian' : 2, 'bomber' : 0, 'striker' : 3, 'damage' : 100, 'speed' : 125, 'health : 25}
+{
+    'guardian' : 2, 'bomber' : 0, 'striker' : 3, 'damage' : 100, 'speed' : 125, 'health : 25
+}
 ```
 ## Response
 ```
 {
-'message': 'Team 2 is updated to guardian 2, bomber 0, striker 3, damage 100, speed 125, health 25'
+    'message': 'Team 2 is updated to guardian 2, bomber 0, striker 3, damage 100, speed 125, health 25'
 }
 ```
 
-# Wipe a team 
+# Reset a team 
 
-Wipes a team's ship counts to zero. White team authenticated
+Reset's a team to default values
 
 ```
-/teams/<teamNum>/wipe [PUT]
+/teams/<teamNum>/reset [PUT]
 ```
 ## URL
 ```
-curl -b COOKIE -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/wipe
+curl -b COOKIE -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/teams/<teamNum>/reset
 ```
 ## Response
 ```
 {
-'message': 'Team 2 has been reset'
+    'message': 'Team 2 has been reset'
 }
 ```
 # Boost a team
@@ -249,7 +253,7 @@ curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"attribute" :
 ## Response
 ```
 {
-'message' : 'Team X [type]'d their [damage, speed, health] by [value] '
+    'message' : 'Team X [type]'d their [damage, speed, health] by [value]'
 }
 ```
 ## Built With
@@ -260,6 +264,6 @@ curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"attribute" :
 
 ## Authors
 
-***Brandon Dossantos**
+* **Brandon Dossantos**
 
 
