@@ -12,27 +12,27 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}/teams.db'.format(dir_path)
 db = SQLAlchemy(app)
 
-def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-    return username == 'whiteteam' and password == 'BmuqO=[yUDQ%>)*`'
+# def check_auth(username, password):
+#     """This function is called to check if a username /
+#     password combination is valid.
+#     """
+#     return username == 'whiteteam' and password == 'BmuqO=[yUDQ%>)*`'
 
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-    'YOU SHALL NOT PASS.\n', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'}),
+# def authenticate():
+#     """Sends a 401 response that enables basic auth"""
+#     return Response(
+#     'YOU SHALL NOT PASS.\n', 401,
+#     {'WWW-Authenticate': 'Basic realm="Login Required"'}),
     
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
+# def requires_auth(f):
+#     @wraps(f)
+#     def decorated(*args, **kwargs):
+#         auth = request.authorization
+#         if not auth or not check_auth(auth.username, auth.password):
+#             return authenticate()
+#         return f(*args, **kwargs)
+#     return decorated
 
 class Teams(db.Model):
     #id = db .Column(db.Integer, primary_key=True)
@@ -83,7 +83,7 @@ class Config(db.Model):
 Creates a new team in the database with zeroed ships
 """
 @app.route('/createteam', methods=['POST'])
-@requires_auth
+# @requires_auth
 def create_team():
     data = request.get_json(force=True)
     print("data is {}".format(data))
@@ -97,7 +97,7 @@ def create_team():
 Deletes an existing team in the database 
 """
 @app.route('/deleteteam/<teamNum>', methods=['DELETE'])
-@requires_auth
+# @requires_auth
 def delete_team(teamNum): 
     team = Teams.query.filter_by(teamNum=teamNum).first()
 
@@ -112,7 +112,7 @@ def delete_team(teamNum):
 Returns JSON of all the teams in the database
 """
 @app.route('/teams', methods=['GET'])
-@requires_auth
+# @requires_auth
 def get_all_teams():
     teams = Teams.query.all()
     output = []
@@ -133,7 +133,7 @@ def get_all_teams():
 Returns JSON of the team requested
 """
 @app.route('/teams/<teamNum>', methods=['GET'])
-@requires_auth
+# @requires_auth
 def get_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     if not team:
@@ -151,10 +151,10 @@ def get_one_team(teamNum):
     return jsonify(team_data)
 
 """
-Overrides any ship's count
+Override
 """
 @app.route('/teams/<teamNum>', methods=['POST'])
-@requires_auth
+# @requires_auth
 def override_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     data = request.get_json()
@@ -168,10 +168,10 @@ def override_one_team(teamNum):
     return jsonify({'message' : 'Team {} is updated to guardian {}, bomber {}, striker {}, damage {}, speed {}, health {}'.format(teamNum, data['guardian'], data['bomber'], data['striker'], data['damage'], data['speed'], data['health'])})
 
 """
-Resets a team's ship counts to zero
+Resets a team's ship counts to default
 """
 @app.route('/teams/<teamNum>/reset', methods=['PUT'])
-@requires_auth
+# @requires_auth
 def reset_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     team.guardian = 0
@@ -186,65 +186,48 @@ def reset_one_team(teamNum):
 """
 Increments a team's guardian ship count
 """
-@app.route('/teams/<teamNum>/guardian', methods=['PUT'])
+@app.route('/teams/<teamNum>/guardian', methods=['POST'])
 def increment_guardian(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
-    team.guardian += 1
+    data = request.get_json(force=True)
+    team.guardian += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built a guardian ship'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built a guardian ship'.format(teamNum, data['value'])})
 
 """
 Increments a team's bomber ship count
 """
-@app.route('/teams/<teamNum>/bomber', methods=['PUT'])
+@app.route('/teams/<teamNum>/bomber', methods=['POST'])
 def increment_bomber(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
-    team.bomber += 1
+    data = request.get_json(force=True)
+    team.bomber += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built a bomber ship'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built {} bomber ships'.format(teamNum, data['value'])})
 
 """
 Increments a team's striker ship count
 """
-@app.route('/teams/<teamNum>/striker', methods=['PUT'])
+@app.route('/teams/<teamNum>/striker', methods=['POST'])
 def increment_striker(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
-    team.striker += 1
+    data = request.get_json(force=True)
+    team.striker += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built a striker ship'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built a striker ship'.format(teamNum, data['value'])})
 
 
 """
-Boost damage, health, or speed by 25% 
+Boost damage, health, or speed by however much was passed. 
 """
 @app.route('/teams/<teamNum>/boost', methods=['POST'])
-@requires_auth
+# @requires_auth
 def boost_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     data = request.get_json(force=True)
-    print(data)
-    if data['attribute'] == 'damage':
-        if data['boost'] == 'increase':
-            print('INCREASE')
-            team.damage += data['value']
-        elif data['boost'] == 'decrease':
-            print('DECREASE')
-            team.damage -= data['value']
-    elif data['attribute'] == 'speed':
-        if data['boost'] == 'increase':
-            print('INCREASE')
-            team.speed += data['value']
-        elif data['boost'] == 'decrease':
-            print('DECREASE')
-            team.speed -= data['value']
-    elif data['attribute'] == 'health':
-        if data['boost'] == 'increase':
-            print('INCREASE')
-            team.health += data['value']
-        elif data['boost'] == 'decrease':
-            print('DECREASE')
-            team.health -= data['value']
-    else:
+    try:
+        setattr(team, data['attribute'], getattr(team, data['attribute'])+data['value'])
+    except Exception as e:
         return jsonify({'message' : 'Something is wrong'})
 
     db.session.commit()
