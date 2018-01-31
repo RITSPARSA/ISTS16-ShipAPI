@@ -35,13 +35,15 @@ def requires_auth(f):
     return decorated
 
 class Teams(db.Model):
-    id = db .Column(db.Integer, primary_key=True)
-    teamNum = db.Column(db.Integer, unique=True)
+    #id = db .Column(db.Integer, primary_key=True)
+    teamNum = db.Column(db.Integer, unique=True, primary_key=True)
     name = db.Column(db.String(50), unique=True)
-    guardian = db.Column(db.Integer)
-    bomber = db.Column(db.Integer)
-    striker = db.Column(db.Integer)
-    # ratelimit = db.Column(db.Integer, nullable=True)
+    guardian = db.Column(db.Integer, default=0)
+    bomber = db.Column(db.Integer, default=0)
+    striker = db.Column(db.Integer, default=0)
+    health = db.Column(db.Integer, default=100)
+    damage = db.Column(db.Integer, default=100)
+    speed = db.Column(db.Integer, default=100)
 
 class Config(db.Model):
     ratelimit = db.Column(db.Integer, primary_key=True)
@@ -50,26 +52,26 @@ class Config(db.Model):
         self.ratelimit = ratelimit
         db.session.commit()
 
-RATELIMIT = 5
+# RATELIMIT = 5
 
-limiter = Limiter(
-    app,
-    headers_enabled=True, 
-    key_func=get_remote_address,
-    default_limits=["10/{}minute".format(RATELIMIT)],
+# limiter = Limiter(
+#     app,
+#     headers_enabled=True, 
+#     key_func=get_remote_address,
+#     default_limits=["10/{}minute".format(RATELIMIT)],
     
-)
+# )
 
-@app.route('/ratelimit', methods=['GET','POST'])
-@requires_auth
-def change_ratelimit():
-    if request.method == 'GET':
-        global RATELIMIT
-        return jsonify({'message' : '{}'.format(RATELIMIT)})
-    else:
-        data = request.get_json()
-        limiter._default_limits = data['ratelimit']
-        return jsonify({'message' : 'Ratelimit has been set to {}'.format(data['ratelimit'])})
+# @app.route('/ratelimit', methods=['GET','POST'])
+# @requires_auth
+# def change_ratelimit():
+#     if request.method == 'GET':
+#         global RATELIMIT
+#         return jsonify({'message' : '{}'.format(RATELIMIT)})
+#     else:
+#         data = request.get_json()
+#         limiter._default_limits = data['ratelimit']
+#         return jsonify({'message' : 'Ratelimit has been set to {}'.format(data['ratelimit'])})
 # @app.route('/ratelimit', methods=['GET'])
 # @requires_auth
 # def change_ratelimit():
@@ -79,13 +81,13 @@ def change_ratelimit():
 #     return jsonify({'message' : 'Ratelimit has been set to {}'.format(RATELIMIT)})
 """
 Creates a new team in the database with zeroed ships
-Whiteteam authenticated
 """
 @app.route('/createteam', methods=['POST'])
 @requires_auth
 def create_team():
-    data = request.get_json()
-    new_team = Teams(teamNum=data['teamNum'], name=data['name'], guardian=0, bomber=0, striker=0)
+    data = request.get_json(force=True)
+    print("data is {}".format(data))
+    new_team = Teams(teamNum=data['teamNum'], name=data['name'])
     db.session.add(new_team)
     db.session.commit()
     return jsonify({'message' : 'Team {} - {} created'.format(data['teamNum'], data['name'])})
@@ -93,7 +95,6 @@ def create_team():
 
 """
 Deletes an existing team in the database 
-Whiteteam authenticated
 """
 @app.route('/deleteteam/<teamNum>', methods=['DELETE'])
 @requires_auth
@@ -109,11 +110,9 @@ def delete_team(teamNum):
 
 """
 Returns JSON of all the teams in the database
-White team authenticated
 """
 @app.route('/teams', methods=['GET'])
 @requires_auth
-@limiter.exempt
 def get_all_teams():
     teams = Teams.query.all()
     output = []
@@ -121,20 +120,20 @@ def get_all_teams():
         team_data = {}
         team_data['teamNum'] = team.teamNum
         team_data['name'] = team.name
-        team_data['id'] = team.id
         team_data['guardian'] = team.guardian
         team_data['bomber'] = team.bomber
         team_data['striker'] = team.striker
+        team_data['damage'] = team.damage
+        team_data['speed'] = team.speed
+        team_data['health'] = team.health
         output.append(team_data)
     return jsonify({'teams': output})
 
 """
 Returns JSON of the team requested
-White team authenticated
 """
 @app.route('/teams/<teamNum>', methods=['GET'])
 @requires_auth
-@limiter.exempt
 def get_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     if not team:
@@ -143,46 +142,49 @@ def get_one_team(teamNum):
     team_data = {}
     team_data['teamNum'] = team.teamNum
     team_data['name'] = team.name
-    team_data['id'] = team.id
     team_data['guardian'] = team.guardian
     team_data['bomber'] = team.bomber
     team_data['striker'] = team.striker
-    return jsonify({'team' : team_data})
+    team_data['damage'] = team.damage
+    team_data['speed'] = team.speed
+    team_data['health'] = team.health
+    return jsonify(team_data)
 
 """
 Overrides any ship's count
-White team authenticated
 """
 @app.route('/teams/<teamNum>', methods=['POST'])
 @requires_auth
-@limiter.exempt
 def override_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     data = request.get_json()
     team.guardian = data['guardian']
     team.bomber = data['bomber']
     team.striker = data['striker']
+    team.damage = data['damage']
+    team.speed = data['speed']
+    team.health = data['health']
     db.session.commit()
-    return jsonify({'message' : 'Team {} is updated to guardian {}, bomber {}, striker {}'.format(teamNum, data['guardian'], data['bomber'], data['striker'])})
+    return jsonify({'message' : 'Team {} is updated to guardian {}, bomber {}, striker {}, damage {}, speed {}, health {}'.format(teamNum, data['guardian'], data['bomber'], data['striker'], data['damage'], data['speed'], data['health'])})
 
 """
-Wipes a team's ship counts to zero
-White team authenticated
+Resets a team's ship counts to zero
 """
-@app.route('/teams/<teamNum>/wipe', methods=['PUT'])
+@app.route('/teams/<teamNum>/reset', methods=['PUT'])
 @requires_auth
-@limiter.exempt
-def wipe_one_team(teamNum):
+def reset_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     team.guardian = 0
     team.bomber = 0
     team.striker = 0
+    team.damage = 100
+    team.speed = 100
+    team.health = 100
     db.session.commit()
-    return jsonify({'message' : 'Team {} has been wiped'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has been reset'.format(teamNum)})
 
 """
 Increments a team's guardian ship count
-No authenticated needed.
 """
 @app.route('/teams/<teamNum>/guardian', methods=['PUT'])
 def increment_guardian(teamNum):
@@ -193,7 +195,6 @@ def increment_guardian(teamNum):
 
 """
 Increments a team's bomber ship count
-No authenticated needed.
 """
 @app.route('/teams/<teamNum>/bomber', methods=['PUT'])
 def increment_bomber(teamNum):
@@ -204,7 +205,6 @@ def increment_bomber(teamNum):
 
 """
 Increments a team's striker ship count
-No authenticated needed.
 """
 @app.route('/teams/<teamNum>/striker', methods=['PUT'])
 def increment_striker(teamNum):
@@ -212,6 +212,43 @@ def increment_striker(teamNum):
     team.striker += 1
     db.session.commit()
     return jsonify({'message' : 'Team {} has built a striker ship'.format(teamNum)})
+
+
+"""
+Boost damage, health, or speed by 25% 
+"""
+@app.route('/teams/<teamNum>/boost', methods=['POST'])
+@requires_auth
+def boost_team(teamNum):
+    team = Teams.query.filter_by(teamNum=teamNum).first()
+    data = request.get_json(force=True)
+    print(data)
+    if data['attribute'] == 'damage':
+        if data['boost'] == 'increase':
+            print('INCREASE')
+            team.damage += data['value']
+        elif data['boost'] == 'decrease':
+            print('DECREASE')
+            team.damage -= data['value']
+    elif data['attribute'] == 'speed':
+        if data['boost'] == 'increase':
+            print('INCREASE')
+            team.speed += data['value']
+        elif data['boost'] == 'decrease':
+            print('DECREASE')
+            team.speed -= data['value']
+    elif data['attribute'] == 'health':
+        if data['boost'] == 'increase':
+            print('INCREASE')
+            team.health += data['value']
+        elif data['boost'] == 'decrease':
+            print('DECREASE')
+            team.health -= data['value']
+    else:
+        return jsonify({'message' : 'Something is wrong'})
+
+    db.session.commit()
+    return jsonify({'message' : 'Team {} their {} by {} '.format(teamNum, data['boost'], data['value'])})
 
 if __name__ == '__main__':
 
