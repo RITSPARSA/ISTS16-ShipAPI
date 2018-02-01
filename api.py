@@ -216,7 +216,7 @@ def increment_bomber(teamNum):
 Increments a team's striker ship count
 """
 @app.route('/teams/<int:teamNum>/striker', methods=['POST'])
-@white_team
+@blue_white
 def increment_striker(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     data = request.get_json(force=True)
@@ -229,7 +229,7 @@ def increment_striker(teamNum):
 Boost damage, health, or speed by however much was passed. 
 """
 @app.route('/teams/<int:teamNum>/boost', methods=['POST'])
-@white_team
+@blue_white
 def boost_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     data = request.get_json(force=True)
