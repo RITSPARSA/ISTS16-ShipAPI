@@ -180,7 +180,7 @@ def override_one_team(teamNum):
 """
 Resets a team's ship counts to default
 """
-@app.route('/teams/<int:teamNum>/reset', methods=['PUT'])
+@app.route('/teams/<int:teamNum>/reset', methods=['POST'])
 @white_team
 def reset_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
@@ -227,7 +227,7 @@ def increment_bomber(teamNum):
 Increments a team's striker ship count
 """
 @app.route('/teams/<int:teamNum>/striker', methods=['POST'])
-@white_team
+@blue_white
 def increment_striker(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     if not team:
@@ -242,7 +242,7 @@ def increment_striker(teamNum):
 Boost damage, health, or speed by however much was passed. 
 """
 @app.route('/teams/<int:teamNum>/boost', methods=['POST'])
-@white_team
+@blue_white
 def boost_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     if not team:
