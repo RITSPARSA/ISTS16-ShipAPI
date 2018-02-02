@@ -175,7 +175,7 @@ def override_one_team(teamNum):
 """
 Resets a team's ship counts to default
 """
-@app.route('/teams/<int:teamNum>/reset', methods=['PUT'])
+@app.route('/teams/<int:teamNum>/reset', methods=['POST'])
 @white_team
 def reset_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
@@ -232,6 +232,7 @@ Boost damage, health, or speed by however much was passed.
 @blue_white
 def boost_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    print(request.data)
     data = request.get_json(force=True)
     try:
         setattr(team, data['type'], getattr(team, data['type'])+data['value'])
