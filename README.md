@@ -248,12 +248,12 @@ Boost a team's attribute by however much is passed.
 ```
 ## URL
 ```
-curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"attribute" : damage, speed, or health, "type" : "increase or decrease", "value" : 25}' http://127.0.0.1:5000/teams/<teamNum>/boost
+curl -b COOKIE -v -H "Content-Type: application/json" -X POST -d '{"type" : damage, speed, or health, "change" : "increase or decrease", "value" : 25}' http://127.0.0.1:5000/teams/<teamNum>/boost
 ```
 ## Response
 ```
 {
-    'message' : 'Team X [type]'d their [damage, speed, health] by [value]'
+    'message' : 'Team X [change]'d their [type] by [value]'
 }
 ```
 ## Built With
