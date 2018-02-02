@@ -14,16 +14,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}/teams.db'.format(dir_path)
 db = SQLAlchemy(app)
 
 def no_token():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-    'I cant find your token.\n', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return jsonify({'error' : 'no token in cookies'})
 
 def no_match():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-    'Token and team number do not match.\n', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return jsonify({'error' : 'team number does not match token'})
 
 """
 Query the auth server with passed cookie token
@@ -36,6 +30,8 @@ def authentication(token):
     resp_data = resp.json()
     if resp_data['success']:
         return int(resp_data['success'])
+    else:
+        return jsonify({'error' : 'success key'})
 
 """
 Compares the number returned from the auth server 
@@ -46,7 +42,10 @@ def blue_white(f):
     def decorated(*args, **kwargs):
         if 'token' not in request.cookies:
             return no_token()
-        token_num = authentication(request.cookies['token'])
+        try:
+            token_num = authentication(request.cookies['token'])
+        except Exception:
+            return jsonify({'error' : 'success key not found'})
         if token_num == 1337 or token_num == kwargs['teamNum']:
             return f(*args, **kwargs)
         else:
@@ -62,7 +61,10 @@ def white_team(f):
     def decorated(*args, **kwargs):
         if 'token' not in request.cookies:
             return no_token()
-        token_num = authentication(request.cookies['token'])
+        try:
+            token_num = authentication(request.cookies['token'])
+        except Exception:
+            return jsonify({'error' : 'success key not found'})
         if token_num == 1337:
             return f(*args, **kwargs)
         else:
@@ -108,7 +110,7 @@ def delete_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
 
     if not team:
-        return jsonify({'message' : 'Team {} NOT found!'.format(teamNum)})
+        return jsonify({'message' : 'Team {} not found'.format(teamNum)})
 
     db.session.delete(team)
     db.session.commit()
@@ -143,7 +145,7 @@ Returns JSON of the team requested
 def get_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
     if not team:
-        return jsonify({'message' : 'Team {} - {} NOT found!'.format(data['teamNum'], data['name'])})
+        return jsonify({'error' : 'Team {} - {} not found'.format(data['teamNum'], data['name'])})
     team_data = {}
     team_data['teamNum'] = team.teamNum
     team_data['name'] = team.name
@@ -162,6 +164,9 @@ Override
 @white_team
 def override_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
+
     data = request.get_json()
     team.guardian = data['guardian']
     team.bomber = data['bomber']
@@ -170,7 +175,7 @@ def override_one_team(teamNum):
     team.speed = data['speed']
     team.health = data['health']
     db.session.commit()
-    return jsonify({'message' : 'Team {} is updated to guardian {}, bomber {}, striker {}, damage {}, speed {}, health {}'.format(teamNum, data['guardian'], data['bomber'], data['striker'], data['damage'], data['speed'], data['health'])})
+    return jsonify({'message' : 'Team {} updated to guardian {}, bomber {}, striker {}, damage {}, speed {}, health {}'.format(teamNum, data['guardian'], data['bomber'], data['striker'], data['damage'], data['speed'], data['health'])})
 
 """
 Resets a team's ship counts to default
@@ -179,6 +184,8 @@ Resets a team's ship counts to default
 @white_team
 def reset_one_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     team.guardian = 0
     team.bomber = 0
     team.striker = 0
@@ -195,10 +202,12 @@ Increments a team's guardian ship count
 @white_team
 def increment_guardian(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.guardian += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built guardian ships'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built {} guardian ships'.format(teamNum, data['value'])})
 
 """
 Increments a team's bomber ship count
@@ -207,10 +216,12 @@ Increments a team's bomber ship count
 @white_team
 def increment_bomber(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.bomber += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built bomber ships'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built {} bomber ships'.format(teamNum, data['value'])})
 
 """
 Increments a team's striker ship count
@@ -219,10 +230,12 @@ Increments a team's striker ship count
 @white_team
 def increment_striker(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.striker += data['value']
     db.session.commit()
-    return jsonify({'message' : 'Team {} has built striker ships'.format(teamNum)})
+    return jsonify({'message' : 'Team {} has built {} striker ships'.format(teamNum, data['value'])})
 
 
 """
@@ -232,20 +245,21 @@ Boost damage, health, or speed by however much was passed.
 @white_team
 def boost_team(teamNum):
     team = Teams.query.filter_by(teamNum=teamNum).first()
+    if not team:
+        return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     try:
         setattr(team, data['type'], getattr(team, data['type'])+data['value'])
     except Exception as e:
-        return jsonify({'message' : 'Something is wrong'})
+        return jsonify({'error' : '{}'.format(e)})
 
     db.session.commit()
-    return jsonify({'message' : 'Team {} their {} by {} '.format(teamNum, data['change'], data['value'])})
+    return jsonify({'message' : 'Team {} {}\'d their {} by {} '.format(teamNum, data['change'], data['type'], data['value'])})
 
 if __name__ == '__main__':
 
     if not os.path.exists('teams.db'): 
         open('teams.db', 'w').close() 
-        #db.create_all()
     app.run(debug=True, host='0.0.0.0', port=6000)
 
             
