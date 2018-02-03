@@ -206,6 +206,9 @@ def increment_guardian(teamNum):
         return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.guardian += data['value']
+    if team.guardian < 0:
+        team.guardian = 0
+
     db.session.commit()
     return jsonify({'message' : 'Team {} has built {} guardian ships'.format(teamNum, data['value'])})
 
@@ -220,6 +223,9 @@ def increment_bomber(teamNum):
         return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.bomber += data['value']
+    if team.bomber < 0:
+        team.bomber = 0
+
     db.session.commit()
     return jsonify({'message' : 'Team {} has built {} bomber ships'.format(teamNum, data['value'])})
 
