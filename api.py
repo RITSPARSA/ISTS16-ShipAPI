@@ -234,6 +234,9 @@ def increment_striker(teamNum):
         return jsonify({'error' : 'Team {} not found'.format(teamNum)})
     data = request.get_json(force=True)
     team.striker += data['value']
+    if team.striker < 0:
+        team.striker = 0
+
     db.session.commit()
     return jsonify({'message' : 'Team {} has built {} striker ships'.format(teamNum, data['value'])})
 
