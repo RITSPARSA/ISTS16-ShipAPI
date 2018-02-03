@@ -120,7 +120,7 @@ def delete_team(teamNum):
 Returns JSON of all the teams in the database
 """
 @app.route('/teams', methods=['GET'])
-@white_team
+@blue_white
 def get_all_teams():
     teams = Teams.query.all()
     output = []
