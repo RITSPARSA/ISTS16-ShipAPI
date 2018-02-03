@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_limiter import Limiter, HEADERS
 from flask_limiter.util import get_remote_address
 
-AUTH_SERVER = 'http://lilbite.org:9000'
+AUTH_SERVER = 'http://10.0.20.21:9000'
 
 app = Flask(__name__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -120,7 +120,7 @@ def delete_team(teamNum):
 Returns JSON of all the teams in the database
 """
 @app.route('/teams', methods=['GET'])
-@blue_white
+@white_team
 def get_all_teams():
     teams = Teams.query.all()
     output = []
